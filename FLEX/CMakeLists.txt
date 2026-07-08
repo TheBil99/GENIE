@@ -4,6 +4,13 @@ project(FLEX LANGUAGES C CXX)
 
 include_directories(include/)
 
+if (POLICY CMP0167)
+    cmake_policy(SET CMP0167 OLD)
+endif ()
+find_package(Boost REQUIRED)
+find_package(GSL REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS} ${GSL_INCLUDE_DIRS})
+
 set(CMAKE_CXX_FLAGS "-std=c++0x -O3 -lrt -lpthread ")
 
 IF (NOT DEFINED SSE_SUPPORT)

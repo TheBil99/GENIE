@@ -23,7 +23,7 @@
 #include "io.h"
 #include "std.h"
 
-#include "/usr/include/boost/random.hpp"
+#include <boost/random.hpp>
 #include <boost/math/distributions/normal.hpp>
 
 // #if SSE_SUPPORT==1
