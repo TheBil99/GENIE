@@ -2335,7 +2335,10 @@ int main(int argc, char const *argv[]){
         }
 
         MatrixXdr asymp_se;
-        asymp_se.resize(Nbin+gen_Nbin-1, phenocount);
+        // gen_Nbin==1 (no gene-level partitioning) still needs the base Nbin+1
+        // rows written by the unconditional loop just below; "Nbin+gen_Nbin-1"
+        // only covers that when gen_Nbin>=2, so take the max of both bounds.
+        asymp_se.resize(Nbin + std::max(1, gen_Nbin - 1), phenocount);
 
         MatrixXdr all_cov_mat = MatrixXdr::Zero(phenocount, (Nbin+1)*(Nbin+1));
 
@@ -2743,7 +2746,11 @@ int main(int argc, char const *argv[]){
                 cout<<"Sigma^2_e : "<<point_est_preserved(Nbin, phen_index)<<"  SE : "<<asymp_se(Nbin,phen_index)<<endl;
                 outfile<<"Sigma^2_e : "<<point_est_preserved(Nbin, phen_index)<<"  SE : "<<asymp_se(Nbin,phen_index)<<endl;
                 
-                MatrixXdr gene_sigma = MatrixXdr::Zero(gen_Nbin-2, 1);
+                // gen_Nbin<2 (no gene-level partitioning) has no downstream
+                // consumer for this (all uses below are commented out) — guard
+                // against the negative-size allocation Zero(gen_Nbin-2, 1) would
+                // otherwise construct.
+                MatrixXdr gene_sigma = MatrixXdr::Zero(std::max(0, gen_Nbin-2), 1);
                 // if (gen_Nbin > 1) {
                 //         for (int j = 1; j < gen_Nbin-1; j++) {
                 //                 for (int m = 0; m <= j; m++) {
@@ -2808,8 +2815,11 @@ int main(int argc, char const *argv[]){
                         }
                 }
 
-                MatrixXdr gene_h2_std = MatrixXdr::Zero(gen_Nbin-2, 1);
-                MatrixXdr gene_h2 = MatrixXdr::Zero(gen_Nbin-2, 1);
+                // same gen_Nbin<2 guard as gene_sigma above — the "h2_g[gene]"
+                // block below only runs when gen_Nbin>1, but these are
+                // allocated unconditionally.
+                MatrixXdr gene_h2_std = MatrixXdr::Zero(std::max(0, gen_Nbin-2), 1);
+                MatrixXdr gene_h2 = MatrixXdr::Zero(std::max(0, gen_Nbin-2), 1);
 
                 if (gen_Nbin > 1) {
                         if (gen_Nbin == 2) {
