@@ -573,6 +573,12 @@ void parse_args(int argc, char const *argv[]){
 		exit(-1);
 	}
 
+	if(command_line_opts.gen_by_env==true && command_line_opts.ENV_FILE_PATH==""){
+		cout<<"Environment file missing: -m/model "<<command_line_opts.model<<" requires -e <environment file> (or \"environment\" in the config file)"<<endl;
+		exitWithError (usage ());
+		exit(-1);
+	}
+
 }
 
 #endif

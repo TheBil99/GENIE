@@ -1323,8 +1323,7 @@ int main(int argc, char const *argv[]){
         std::string envfile=command_line_opts.ENV_FILE_PATH;
 
         ///model
-        // gen_by_env = command_line_opts.gen_by_env;
-        gen_by_env = false;
+        gen_by_env = command_line_opts.gen_by_env;
         hetero_noise = command_line_opts.hetero_noise;
         if (gen_by_env == false) {
                 Nenv = 0;
