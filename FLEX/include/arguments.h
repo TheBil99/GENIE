@@ -49,6 +49,7 @@ struct options{
 	int seed;
 	bool normalize_proj_pheno;
 	bool cov_add_intercept;
+	bool add_env_to_cov;
 	int nthreads;
 	bool verbose;
 	//CHANGE(11/12)
@@ -90,7 +91,7 @@ std::string usage ( ) {
 	ostr <<"Usage: FLEX " << "[input flags]" << endl;
 	ostr <<"\t-g [genotype] -annot [annotation] -p [phenotype] -c [covariates] -o [output]" << endl;
 	ostr  << "\t[-e [environment] -m [G|G+GxE|G+GxE+NxE] -k [# random vectors] -jn [# jackknife subsamples]	-t [# threads]]" << endl;
-	ostr <<  "\t[-s [random seed] -eXannot -norm_proj_pheno [0|1] -cov_add_intercept [0|1] -v [0|1]]"<<endl;
+	ostr <<  "\t[-s [random seed] -eXannot -norm_proj_pheno [0|1] -cov_add_intercept [0|1] -add_env_to_cov [0|1] -v [0|1]]"<<endl;
 
 	return ostr.str ();
 }
@@ -293,6 +294,7 @@ void parse_args(int argc, char const *argv[]){
 	command_line_opts.seed = -1;
 	command_line_opts.normalize_proj_pheno = true;
 	command_line_opts.cov_add_intercept = true;
+	command_line_opts.add_env_to_cov = true;
 	command_line_opts.nthreads = 1;
 	command_line_opts.verbose = false;
 	//CHANGE(11/12)
@@ -343,6 +345,7 @@ void parse_args(int argc, char const *argv[]){
         command_line_opts.print_trace = cfg.getValueOfKey<bool>("trace", false);
         command_line_opts.verbose = cfg.getValueOfKey<bool>("verbose", false);
 		command_line_opts.bin_pheno_flag = cfg.getValueOfKey<bool>("binary", false);
+        command_line_opts.add_env_to_cov = cfg.getValueOfKey<bool>("add_env_to_cov", true);
         //command_line_opts.print_trace = cfg.keyExists("print_trace");
         //command_line_opts.verbose = cfg.keyExists("verbose");
         command_line_opts.model = cfg.getValueOfKey<string>("model", string(""));
@@ -498,6 +501,15 @@ void parse_args(int argc, char const *argv[]){
 						cout << "The one vector (intercept term) will not be added to the covariates" << endl;
 					} else {
 						command_line_opts.cov_add_intercept = true;
+					}
+					i++;
+				} else if (strcmp(argv[i], "-add_env_to_cov")==0) {
+					int flag = atoi(argv[i+1]);
+					if (flag == 0) {
+						command_line_opts.add_env_to_cov = false;
+						cout << "Environment variables will NOT be added to the fixed-effect covariates" << endl;
+					} else {
+						command_line_opts.add_env_to_cov = true;
 					}
 					i++;
 				} else if (strcmp(argv[i], "-t")==0) {

@@ -356,14 +356,15 @@ int read_cov(int Nind, std::string filename){
                 if (cov_add_intercept == true) {
                         //adding col of all ones to covariates
                         for (int i=0;i<Nind;i++)
-                                covariate(i,covNum+Nenv)=1;
+                                covariate(i,covNum)=1;
                         return covNum+1;
-                } 
+                }
         }
         if (cov_add_intercept == true) {
                 //adding col of all ones to covariates
+                int intercept_col = add_env_to_cov==true ? covNum+Nenv : covNum;
                 for (int i=0;i<Nind;i++)
-                        covariate(i,covNum+Nenv)=1;
+                        covariate(i,intercept_col)=1;
         }
 
         if (cov_add_intercept == true) {
@@ -1304,6 +1305,7 @@ int main(int argc, char const *argv[]){
         string geno_name=command_line_opts.GENOTYPE_FILE_PATH;
         bool normalize_proj_pheno = command_line_opts.normalize_proj_pheno;
         cov_add_intercept = command_line_opts.cov_add_intercept;
+        add_env_to_cov = command_line_opts.add_env_to_cov;
 
 
         /////////Read bim file to count # SNPs
